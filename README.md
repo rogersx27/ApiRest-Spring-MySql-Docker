@@ -10,6 +10,6 @@ Todo lo que necesitas está en la carpeta `src/main/application`
   - `services`: Fichero encargado de contener la lógica de cada entidad.
 
 ## Nomenclatura
-  - `dto`: sub-fichero con las estructura de un objecto.
-  - `dao`: fichero con la estructura de acceso a los parámetros de un objeto.
+  - `dto`: ( Data Transfer Object ) sub-fichero con las estructura de un objecto.
+  - `dao`: ( Data Access Object ) fichero con la estructura de acceso a los parámetros de un objeto.
   - `implementations`: sub-fichero que contiene la implementación de una interfaz, usada para mapear los métodos de una clase.
