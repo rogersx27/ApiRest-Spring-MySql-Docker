@@ -25,6 +25,11 @@ public class PositionServiceImplementation implements PositionService {
     }
 
     @Override
+    public Optional<Position> findPositionByTitle(String title) {
+        return positionDAO.findPositionByTitle(title);
+    }
+
+    @Override
     public void savePosition(Position position) {
         positionDAO.savePosition(position);
     }
@@ -38,4 +43,5 @@ public class PositionServiceImplementation implements PositionService {
     public void updatePosition(Position position) {
         positionDAO.updatePosition(position);
     }
+
 }

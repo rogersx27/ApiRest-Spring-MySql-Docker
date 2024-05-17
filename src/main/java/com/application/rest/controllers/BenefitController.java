@@ -19,6 +19,19 @@ public class BenefitController {
     @Autowired
     private BenefitService benefitService;
 
+    @GetMapping("/all")
+    public ResponseEntity<?> findAllBenefits() {
+        List<BenefitDTO> benefits = benefitService.findAllBenefits()
+                .stream()
+                .map(benefit -> BenefitDTO.builder()
+                        .id(benefit.getId())
+                        .description(benefit.getDescription())
+                        .employeeHasBenefits(benefit.getEmployeeHasBenefits())
+                        .build())
+                .toList();
+        return ResponseEntity.ok(benefits);
+    }
+
     @GetMapping("/find/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
         Optional<Benefit> benefitOptional = benefitService.findBenefitById(id);
@@ -34,19 +47,6 @@ public class BenefitController {
             return ResponseEntity.ok(benefitDTO);
         }
             return ResponseEntity.notFound().build();
-    }
-
-    @GetMapping("/all")
-    public ResponseEntity<?> findAllBenefits() {
-        List<BenefitDTO> benefits = benefitService.findAllBenefits()
-                .stream()
-                .map(benefit -> BenefitDTO.builder()
-                        .id(benefit.getId())
-                        .description(benefit.getDescription())
-                        .employeeHasBenefits(benefit.getEmployeeHasBenefits())
-                        .build())
-                .toList();
-        return ResponseEntity.ok(benefits);
     }
 
     @PostMapping("/save")

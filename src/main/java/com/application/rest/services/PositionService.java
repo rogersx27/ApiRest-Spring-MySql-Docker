@@ -15,4 +15,6 @@ public interface PositionService {
     void deletePosition(Long id);
 
     void updatePosition(Position position);
+
+    Optional<Position> findPositionByTitle(String title);
 }

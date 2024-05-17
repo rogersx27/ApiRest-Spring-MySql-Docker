@@ -26,17 +26,17 @@ public class DepartmentServiceImplementation implements DepartmentService {
     }
 
     @Override
-    public void saveDeparment(Department department) {
-        departmentDAO.saveDeparment(department);
+    public void saveDepartment(Department department) {
+        departmentDAO.saveDepartment(department);
     }
 
     @Override
-    public void deleteDeparment(Long id) {
-        departmentDAO.deleteDeparment(id);
+    public void deleteDepartment(Long id) {
+        departmentDAO.deleteDepartment(id);
     }
 
     @Override
-    public void updateDeparment(Department department) {
-        departmentDAO.updateDeparment(department);
+    public void updateDepartment(Department department) {
+        departmentDAO.updateDepartment(department);
     }
 }

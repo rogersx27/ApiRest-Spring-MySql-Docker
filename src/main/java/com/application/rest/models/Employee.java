@@ -3,7 +3,9 @@ package com.application.rest.models;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Setter
@@ -22,7 +24,7 @@ public class Employee {
     private String lastName;
     private String email;
     private String phoneNumber;
-    private String hireDate;
+    private LocalDate hireDate;
 
     @ManyToOne
     @JoinColumn(name = "department_id", nullable = false)

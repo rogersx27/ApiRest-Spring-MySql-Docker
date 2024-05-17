@@ -26,6 +26,11 @@ public class PositionDAOImplement implements PositionDAO {
     }
 
     @Override
+    public Optional<Position> findPositionByTitle(String title) {
+        return positionRepository.findByTitle(title);
+    }
+
+    @Override
     public void savePosition(Position position) {
         positionRepository.save(position);
     }
@@ -39,4 +44,6 @@ public class PositionDAOImplement implements PositionDAO {
     public void updatePosition(Position position) {
         positionRepository.save(position);
     }
+
+
 }

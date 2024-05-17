@@ -16,4 +16,6 @@ public interface PositionDAO {
     void deletePosition(Long id);
 
     void updatePosition(Position position);
+
+    Optional<Position> findPositionByTitle(String title);
 }

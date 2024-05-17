@@ -26,17 +26,17 @@ public class DepartmentDAOImplement implements DepartmentDAO {
     }
 
     @Override
-    public void saveDeparment(Department department) {
+    public void saveDepartment(Department department) {
         departmentRepository.save(department);
     }
 
     @Override
-    public void deleteDeparment(Long id) {
+    public void deleteDepartment(Long id) {
         departmentRepository.deleteById(id);
     }
 
     @Override
-    public void updateDeparment(Department department) {
+    public void updateDepartment(Department department) {
         departmentRepository.save(department);
     }
 }

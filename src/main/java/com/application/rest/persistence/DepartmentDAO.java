@@ -11,9 +11,9 @@ public interface DepartmentDAO {
 
     List<Department> findAllDepartments();
 
-    void saveDeparment(Department department);
+    void saveDepartment(Department department);
 
-    void deleteDeparment(Long id);
+    void deleteDepartment(Long id);
 
-    void updateDeparment(Department department);
+    void updateDepartment(Department department);
 }
