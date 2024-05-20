@@ -5,15 +5,19 @@ import com.application.rest.models.Department;
 import com.application.rest.models.Employee;
 import com.application.rest.models.Position;
 import com.application.rest.services.EmployeeService;
+import lombok.SneakyThrows;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.LocalDate;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+@Log
 @RestController
 @RequestMapping("/api/v1/employees")
 public class EmployeeController {
@@ -37,6 +41,7 @@ public class EmployeeController {
                         .build())
                 .toList();
 
+        log.info("All employees found");
         return ResponseEntity.ok(employees);
     }
 
@@ -44,76 +49,86 @@ public class EmployeeController {
     public ResponseEntity<?> findById(@PathVariable Long id) {
         Optional<Employee> employeeOptional = employeeService.findEmployeeById(id);
 
-        if (employeeOptional.isPresent()) {
-            Employee employee = employeeOptional.get();
-
-            EmployeeDTO employeeDTO = EmployeeDTO.builder()
-                    .id(employee.getId())
-                    .firstName(employee.getFirstName())
-                    .lastName(employee.getLastName())
-                    .email(employee.getEmail())
-                    .phoneNumber(employee.getPhoneNumber())
-                    .hireDate(employee.getHireDate())
-                    .positionId(employee.getPosition().getId())
-                    .departmentId(employee.getDepartment().getId())
-                    .employeeHasBenefits(employee.getEmployeeHasBenefits())
-                    .build();
-
-            return ResponseEntity.ok(employeeDTO);
+        if (!employeeOptional.isPresent()) {
+            log.warning("Employee with id " + id + " not found");
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
+
+        Employee employee = employeeOptional.get();
+
+        EmployeeDTO employeeDTO = EmployeeDTO.builder()
+                .id(employee.getId())
+                .firstName(employee.getFirstName())
+                .lastName(employee.getLastName())
+                .email(employee.getEmail())
+                .phoneNumber(employee.getPhoneNumber())
+                .hireDate(employee.getHireDate())
+                .positionId(employee.getPosition().getId())
+                .departmentId(employee.getDepartment().getId())
+                .employeeHasBenefits(employee.getEmployeeHasBenefits())
+                .build();
+
+        log.info("Employee with id " + id + " found");
+        return ResponseEntity.ok(employeeDTO);
     }
 
     @GetMapping("/find/email/{email}")
     public ResponseEntity<?> findByEmail(@PathVariable String email) {
         Optional<Employee> employeeOptional = employeeService.findEmployeeByEmail(email);
 
-        if (employeeOptional.isPresent()) {
-            Employee employee = employeeOptional.get();
-
-            EmployeeDTO employeeDTO = EmployeeDTO.builder()
-                    .id(employee.getId())
-                    .firstName(employee.getFirstName())
-                    .lastName(employee.getLastName())
-                    .email(employee.getEmail())
-                    .phoneNumber(employee.getPhoneNumber())
-                    .hireDate(employee.getHireDate())
-                    .positionId(employee.getPosition().getId())
-                    .departmentId(employee.getDepartment().getId())
-                    .employeeHasBenefits(employee.getEmployeeHasBenefits())
-                    .build();
-
-            return ResponseEntity.ok(employeeDTO);
+        if (!employeeOptional.isPresent()) {
+            log.warning("Employee with email " + email + " not found");
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
+
+        Employee employee = employeeOptional.get();
+
+        EmployeeDTO employeeDTO = EmployeeDTO.builder()
+                .id(employee.getId())
+                .firstName(employee.getFirstName())
+                .lastName(employee.getLastName())
+                .email(employee.getEmail())
+                .phoneNumber(employee.getPhoneNumber())
+                .hireDate(employee.getHireDate())
+                .positionId(employee.getPosition().getId())
+                .departmentId(employee.getDepartment().getId())
+                .employeeHasBenefits(employee.getEmployeeHasBenefits())
+                .build();
+
+        log.info("Employee with email " + email + " found");
+        return ResponseEntity.ok(employeeDTO);
     }
 
     @GetMapping("/find/phone/{phoneNumber}")
     public ResponseEntity<?> findByPhoneNumber(@PathVariable String phoneNumber) {
         Optional<Employee> employeeOptional = employeeService.findEmployeeByPhoneNumber(phoneNumber);
 
-        if (employeeOptional.isPresent()) {
-            Employee employee = employeeOptional.get();
-
-            EmployeeDTO employeeDTO = EmployeeDTO.builder()
-                    .id(employee.getId())
-                    .firstName(employee.getFirstName())
-                    .lastName(employee.getLastName())
-                    .email(employee.getEmail())
-                    .phoneNumber(employee.getPhoneNumber())
-                    .hireDate(employee.getHireDate())
-                    .positionId(employee.getPosition().getId())
-                    .departmentId(employee.getDepartment().getId())
-                    .employeeHasBenefits(employee.getEmployeeHasBenefits())
-                    .build();
-
-            return ResponseEntity.ok(employeeDTO);
+        if (!employeeOptional.isPresent()) {
+            log.warning("Employee with phone number " + phoneNumber + " not found");
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
+
+        Employee employee = employeeOptional.get();
+
+        EmployeeDTO employeeDTO = EmployeeDTO.builder()
+                .id(employee.getId())
+                .firstName(employee.getFirstName())
+                .lastName(employee.getLastName())
+                .email(employee.getEmail())
+                .phoneNumber(employee.getPhoneNumber())
+                .hireDate(employee.getHireDate())
+                .positionId(employee.getPosition().getId())
+                .departmentId(employee.getDepartment().getId())
+                .employeeHasBenefits(employee.getEmployeeHasBenefits())
+                .build();
+
+        log.info("Employee with phone number " + phoneNumber + " found");
+        return ResponseEntity.ok(employeeDTO);
     }
 
-    @GetMapping("/hiredate/{hireDate}")
+    @GetMapping("/find/hiredate/{hireDate}")
     public ResponseEntity<?> findByHireDate(@PathVariable LocalDate hireDate) {
+
         List<EmployeeDTO> employees = employeeService.findEmployeeByHireDate(hireDate)
                 .stream()
                 .map(employee -> EmployeeDTO.builder()
@@ -129,10 +144,11 @@ public class EmployeeController {
                         .build())
                 .toList();
 
+        log.info("Employees with hire date " + hireDate + " found");
         return ResponseEntity.ok(employees);
     }
 
-    @GetMapping("/position/{positionId}")
+    @GetMapping("/find/position/{positionId}")
     public ResponseEntity<?> findByPosition(@PathVariable Long positionId) {
         Position position = new Position();
         position.setId(positionId);
@@ -151,15 +167,15 @@ public class EmployeeController {
                         .build())
                 .toList();
 
+        log.info("Employees with position id " + positionId + " and position name " + position.getTitle() + " found");
         return ResponseEntity.ok(employees);
     }
 
     @PostMapping("/save")
-    public ResponseEntity<?> saveEmployee(@RequestBody EmployeeDTO employeeDTO) {
+    @SneakyThrows(value = {URISyntaxException.class, IllegalArgumentException.class})
+    public ResponseEntity<?> saveEmployee(@RequestBody EmployeeDTO employeeDTO) throws URISyntaxException {
 
-        if (employeeDTO.isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
+        employeeDTO.isValid();
 
         Position position = new Position();
         position.setId(employeeDTO.getPositionId());
@@ -179,27 +195,42 @@ public class EmployeeController {
 
         employeeService.saveEmployee(employee);
 
-        return ResponseEntity.ok().build();
+        log.info("Employee saved");
+        return ResponseEntity.created(new URI("/api/v1/employees/find/" + employee.getId())).build();
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateEmployee(@PathVariable Long id, @RequestBody EmployeeDTO employeeDTO) {
         Optional<Employee> employeeOptional = employeeService.findEmployeeById(id);
 
-        System.out.println("employeeOptional: " + employeeOptional);
-
-        if (employeeOptional.isPresent()) {
-
-            System.out.println("employeeOptional is present");
-
-            Employee employee = employeeOptional.get();
-            employee.setFirstName(employeeDTO.getFirstName());
-            employee.setLastName(employeeDTO.getLastName());
-            employee.setEmail(employeeDTO.getEmail());
-            employee.setPhoneNumber(employeeDTO.getPhoneNumber());
-            employeeService.updateEmployee(employee);
-            return ResponseEntity.ok("Employee has updated successfully");
+        if (!employeeOptional.isPresent()) {
+            log.warning("Employee with id " + id + " not found");
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
+
+        Employee employee = employeeOptional.get();
+        employee.setFirstName(employeeDTO.getFirstName());
+        employee.setLastName(employeeDTO.getLastName());
+        employee.setEmail(employeeDTO.getEmail());
+        employee.setPhoneNumber(employeeDTO.getPhoneNumber());
+        employeeService.updateEmployee(employee);
+
+        log.info("Employee with id " + id + " updated");
+        return ResponseEntity.ok("Updated success");
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteEmployee(@PathVariable Long id) {
+        Optional<Employee> employeeOptional = employeeService.findEmployeeById(id);
+
+        if (!employeeOptional.isPresent()) {
+            log.warning("Employee with id " + id + " not found");
+            return ResponseEntity.notFound().build();
+        }
+
+        employeeService.deleteEmployee(id);
+
+        log.info("Employee with id " + id + " deleted");
+        return ResponseEntity.ok("Deleted success");
     }
 }

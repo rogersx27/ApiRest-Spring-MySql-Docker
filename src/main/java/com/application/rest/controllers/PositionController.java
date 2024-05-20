@@ -3,13 +3,18 @@ package com.application.rest.controllers;
 import com.application.rest.controllers.dto.PositionDTO;
 import com.application.rest.models.Position;
 import com.application.rest.services.PositionService;
+import lombok.SneakyThrows;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 
+@Log
 @RestController
 @RequestMapping("/api/v1/positions")
 public class PositionController {
@@ -30,9 +35,9 @@ public class PositionController {
                             .build())
                     .toList();
 
+            log.info("All positions found");
             return ResponseEntity.ok(positions);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
     }
@@ -42,21 +47,23 @@ public class PositionController {
         try {
             Optional<Position> positionOptional = positionService.findPositionById(id);
 
-            if (positionOptional.isPresent()) {
-                Position position = positionOptional.get();
-
-                PositionDTO positionDTO = PositionDTO.builder()
-                        .id(position.getId())
-                        .title(position.getTitle())
-                        .description(position.getDescription())
-                        .salary(position.getSalary())
-                        .build();
-
-                return ResponseEntity.ok(positionDTO);
+            if (!positionOptional.isPresent()) {
+                log.warning("Position with id " + id + " not found");
+                return ResponseEntity.notFound().build();
             }
-            return ResponseEntity.notFound().build();
-        }
-        catch (Exception e) {
+
+            Position position = positionOptional.get();
+
+            PositionDTO positionDTO = PositionDTO.builder()
+                    .id(position.getId())
+                    .title(position.getTitle())
+                    .description(position.getDescription())
+                    .salary(position.getSalary())
+                    .build();
+
+            log.info("Position with id " + id + " found");
+            return ResponseEntity.ok(positionDTO);
+        } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
     }
@@ -66,45 +73,44 @@ public class PositionController {
         try {
             Optional<Position> positionOptional = positionService.findPositionByTitle(title);
 
-            if (positionOptional.isPresent()) {
-                Position position = positionOptional.get();
-
-                PositionDTO positionDTO = PositionDTO.builder()
-                        .id(position.getId())
-                        .title(position.getTitle())
-                        .description(position.getDescription())
-                        .salary(position.getSalary())
-                        .build();
-
-                return ResponseEntity.ok(positionDTO);
+            if (!positionOptional.isPresent()) {
+                log.warning("Position with title " + title + " not found");
+                return ResponseEntity.notFound().build();
             }
-            return ResponseEntity.notFound().build();
-        }
-        catch (Exception e) {
+
+            Position position = positionOptional.get();
+
+            PositionDTO positionDTO = PositionDTO.builder()
+                    .id(position.getId())
+                    .title(position.getTitle())
+                    .description(position.getDescription())
+                    .salary(position.getSalary())
+                    .build();
+
+            log.info("Position with title " + title + " found");
+            return ResponseEntity.ok(positionDTO);
+        } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
     }
 
     @PostMapping("/save")
-    public ResponseEntity<?> savePosition(@RequestBody PositionDTO positionDTO) {
-        try {
-            if (positionDTO.getTitle().isBlank() || positionDTO.getDescription().isEmpty() || positionDTO.getSalary() == null){
-                return ResponseEntity.badRequest().build();
-            }
+    @SneakyThrows(value = {URISyntaxException.class, IllegalArgumentException.class})
+    public ResponseEntity<?> savePosition(@RequestBody PositionDTO positionDTO) throws URISyntaxException {
 
-            Position position = Position.builder()
-                    .title(positionDTO.getTitle())
-                    .description(positionDTO.getDescription())
-                    .salary(positionDTO.getSalary())
-                    .build();
+        positionDTO.isValid();
 
-            positionService.savePosition(position);
+        Position position = Position.builder()
+                .title(positionDTO.getTitle())
+                .description(positionDTO.getDescription())
+                .salary(positionDTO.getSalary())
+                .build();
 
-            return ResponseEntity.ok("Position saved successfully");
-        }
-        catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+        positionService.savePosition(position);
+
+        log.info("Position saved");
+        return ResponseEntity.created(new URI("/api/v1/positions/find/" + position.getId())).build();
+
     }
 
     @PutMapping("/update/{id}")
@@ -112,17 +118,20 @@ public class PositionController {
         try {
             Optional<Position> positionOptional = positionService.findPositionById(id);
 
-            if (positionOptional.isPresent()) {
-                Position position = positionOptional.get();
-                position.setTitle(positionDTO.getTitle());
-                position.setDescription(positionDTO.getDescription());
-                position.setSalary(positionDTO.getSalary());
-                positionService.updatePosition(position);
-                return ResponseEntity.ok("Position updated successfully");
+            if (!positionOptional.isPresent()) {
+                log.warning("Position with id " + id + " not found");
+                return ResponseEntity.notFound().build();
             }
-            return ResponseEntity.notFound().build();
-        }
-        catch (Exception e) {
+
+            Position position = positionOptional.get();
+            position.setTitle(positionDTO.getTitle());
+            position.setDescription(positionDTO.getDescription());
+            position.setSalary(positionDTO.getSalary());
+            positionService.updatePosition(position);
+
+            log.info("Position: " + position.getId() + " updated");
+            return ResponseEntity.ok("Position updated successfully");
+        } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
     }
@@ -132,13 +141,16 @@ public class PositionController {
         try {
             Optional<Position> positionOptional = positionService.findPositionById(id);
 
-            if (positionOptional.isPresent()) {
-                positionService.deletePosition(id);
-                return ResponseEntity.ok("Position deleted successfully");
+            if (!positionOptional.isPresent()) {
+                log.warning("Position with id " + id + " not found");
+                return ResponseEntity.notFound().build();
             }
-            return ResponseEntity.notFound().build();
-        }
-        catch (Exception e) {
+
+            positionService.deletePosition(id);
+
+            log.info("Position with id " + id + " deleted");
+            return ResponseEntity.ok("Position deleted successfully");
+        } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
     }

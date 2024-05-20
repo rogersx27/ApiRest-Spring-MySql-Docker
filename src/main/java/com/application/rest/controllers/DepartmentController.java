@@ -3,7 +3,8 @@ package com.application.rest.controllers;
 import com.application.rest.controllers.dto.DepartmentDTO;
 import com.application.rest.models.Department;
 import com.application.rest.services.DepartmentService;
-import org.slf4j.LoggerFactory;
+import lombok.SneakyThrows;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,8 +13,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
 
+@Log
 @RestController
 @RequestMapping("/api/v1/departments")
 public class DepartmentController {
@@ -32,6 +33,7 @@ public class DepartmentController {
                         .build())
                 .toList();
 
+        log.info("All departments found");
         return ResponseEntity.ok(departments);
     }
 
@@ -39,26 +41,28 @@ public class DepartmentController {
     public ResponseEntity<?> findById(@PathVariable Long id) {
         Optional<Department> departmentOptional = departmentService.findDepartmentById(id);
 
-        if (departmentOptional.isPresent()) {
-            Department department = departmentOptional.get();
-
-            DepartmentDTO departmentDTO = DepartmentDTO.builder()
-                    .id(department.getId())
-                    .name(department.getName())
-                    .description(department.getDescription())
-                    .build();
-
-            return ResponseEntity.ok(departmentDTO);
+        if (!departmentOptional.isPresent()) {
+            log.warning("Department with id " + id + " not found");
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
+
+        Department department = departmentOptional.get();
+
+        DepartmentDTO departmentDTO = DepartmentDTO.builder()
+                .id(department.getId())
+                .name(department.getName())
+                .description(department.getDescription())
+                .build();
+
+        log.info("Department with id " + id + " found");
+        return ResponseEntity.ok(departmentDTO);
     }
 
     @PostMapping("/save")
+    @SneakyThrows(value = {URISyntaxException.class, IllegalArgumentException.class})
     public ResponseEntity<?> saveDepartment(@RequestBody DepartmentDTO departmentDTO) throws URISyntaxException {
 
-        if (departmentDTO.getName().isBlank() || departmentDTO.getDescription().isEmpty()){
-            return ResponseEntity.badRequest().build();
-        }
+        departmentDTO.isValid();
 
         Department department = Department.builder()
                 .name(departmentDTO.getName())
@@ -67,31 +71,40 @@ public class DepartmentController {
 
         departmentService.saveDepartment(department);
 
-        return ResponseEntity.created(new URI("/api/v1/departments/save/" + department.getId())).build();
+        log.info("Department saved");
+        return ResponseEntity.created(new URI("/api/v1/departments/find/" + department.getId())).build();
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateDepartment(@PathVariable Long id, @RequestBody DepartmentDTO departmentDTO) {
         Optional<Department> departmentOptional = departmentService.findDepartmentById(id);
 
-        if (departmentOptional.isPresent()) {
-            Department department = departmentOptional.get();
-            department.setName(departmentDTO.getName());
-            department.setDescription(departmentDTO.getDescription());
-            departmentService.updateDepartment(department);
-            return ResponseEntity.ok("Updated success");
+        if (!departmentOptional.isPresent()) {
+            log.warning("Department with id " + id + " not found");
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
+
+        Department department = departmentOptional.get();
+        department.setName(departmentDTO.getName());
+        department.setDescription(departmentDTO.getDescription());
+        departmentService.updateDepartment(department);
+
+        log.info("Department: " + department.getId() + " updated");
+        return ResponseEntity.ok("Updated success");
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteDepartment(@PathVariable Long id) {
         Optional<Department> departmentOptional = departmentService.findDepartmentById(id);
 
-        if (departmentOptional.isPresent()) {
-            departmentService.deleteDepartment(id);
-            return ResponseEntity.ok("Deleted success");
+        if (!departmentOptional.isPresent()) {
+            log.warning("Department with id " + id + " not found");
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
+
+        departmentService.deleteDepartment(id);
+
+        log.info("Department with id " + id + " deleted");
+        return ResponseEntity.ok("Deleted success");
     }
 }
