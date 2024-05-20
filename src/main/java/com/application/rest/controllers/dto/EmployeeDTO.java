@@ -43,8 +43,8 @@ public class EmployeeDTO {
         boolean validateEmail = this.email != null && !this.email.trim().isEmpty();
         boolean validatePhoneNumber = this.phoneNumber != null && !this.phoneNumber.trim().isEmpty();
         boolean validateHireDate = this.hireDate != null;
-        boolean validateDepartmentId = this.departmentId != null;
-        boolean validatePositionId = this.positionId != null;
+        // boolean validatePositionId = this.positionId != null;
+        // boolean validateDepartmentId = this.departmentId != null;
 
         if (!validateFirstName) {
             log.error("----> Invalid first name: it cannot be null or empty");
@@ -71,15 +71,17 @@ public class EmployeeDTO {
             throw new IllegalArgumentException("Invalid hire date: it cannot be null");
         }
 
-        if (!validateDepartmentId) {
-            log.error("----> Invalid department id: it cannot be null");
-            throw new IllegalArgumentException("Invalid department id: it cannot be null");
-        }
+        //if (!validatePositionId) {
+        //    log.error("----> Invalid position id: it cannot be null");
+        //    throw new IllegalArgumentException("Invalid position id: it cannot be null");
+        //}
 
-        if (!validatePositionId) {
-            log.error("----> Invalid position id: it cannot be null");
-            throw new IllegalArgumentException("Invalid position id: it cannot be null");
-        }
+        //if (!validateDepartmentId) {
+        //    log.error("----> Invalid department id: it cannot be null");
+        //    throw new IllegalArgumentException("Invalid department id: it cannot be null");
+        //}
+
+
 
         log.info("Employee DTO is valid");
     }

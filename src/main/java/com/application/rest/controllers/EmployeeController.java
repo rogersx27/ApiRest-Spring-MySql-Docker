@@ -4,7 +4,9 @@ import com.application.rest.controllers.dto.EmployeeDTO;
 import com.application.rest.models.Department;
 import com.application.rest.models.Employee;
 import com.application.rest.models.Position;
+import com.application.rest.services.DepartmentService;
 import com.application.rest.services.EmployeeService;
+import com.application.rest.services.PositionService;
 import lombok.SneakyThrows;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,12 @@ public class EmployeeController {
 
     @Autowired
     private EmployeeService employeeService;
+
+    @Autowired
+    private PositionService positionService;
+
+    @Autowired
+    private DepartmentService departmentService;
 
     @GetMapping("/all")
     public ResponseEntity<?> findAllEmployees() {
@@ -177,11 +185,25 @@ public class EmployeeController {
 
         employeeDTO.isValid();
 
-        Position position = new Position();
-        position.setId(employeeDTO.getPositionId());
+        //Position position = new Position();
+        //position.setId(employeeDTO.getPositionId());
 
-        Department department = new Department();
-        department.setId(employeeDTO.getDepartmentId());
+        log.info("First Name: " + employeeDTO.getFirstName());
+        log.info("Position ID: " + employeeDTO.getPositionId());
+        log.info("Department ID: " + employeeDTO.getDepartmentId());
+
+        Position position = positionService.findPositionById(employeeDTO.getPositionId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid Position ID"));
+
+        log.info("Position found" + position.getTitle());
+
+        //Department department = new Department();
+        //department.setId(employeeDTO.getDepartmentId());
+
+        Department department = departmentService.findDepartmentById(employeeDTO.getDepartmentId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid Department ID"));
+
+        log.info("Department found" + department.getName());
 
         Employee employee = Employee.builder()
                 .firstName(employeeDTO.getFirstName())

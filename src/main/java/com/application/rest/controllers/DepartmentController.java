@@ -3,6 +3,8 @@ package com.application.rest.controllers;
 import com.application.rest.controllers.dto.DepartmentDTO;
 import com.application.rest.models.Department;
 import com.application.rest.services.DepartmentService;
+import com.application.rest.services.EmployeeService;
+import com.application.rest.services.PositionService;
 import lombok.SneakyThrows;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;

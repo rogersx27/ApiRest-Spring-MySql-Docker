@@ -17,4 +17,5 @@ public interface PositionService {
     void updatePosition(Position position);
 
     Optional<Position> findPositionByTitle(String title);
+
 }
