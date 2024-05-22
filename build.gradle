@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.application.rest'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1v'
 
 java {
 	sourceCompatibility = '17'
@@ -38,4 +38,10 @@ tasks.named('bootBuildImage') {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+bootJar {
+	archiveBaseName = 'ApiRest'
+	archiveVersion = ''
+	archiveClassifier = ''
 }
