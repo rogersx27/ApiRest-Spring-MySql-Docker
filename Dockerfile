@@ -2,6 +2,7 @@
 FROM gradle:7.5-jdk17 as build
 WORKDIR /ApiRest-Spring-MySql-Docker
 COPY . .
+# Build the project
 RUN gradle clean build -x test
 
 # Run stage

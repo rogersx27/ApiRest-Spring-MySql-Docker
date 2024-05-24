@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Log
+@CrossOrigin
 @RestController
 @RequestMapping("/api/v1/departments")
 public class DepartmentController {
